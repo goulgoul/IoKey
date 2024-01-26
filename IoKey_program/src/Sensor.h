@@ -12,7 +12,9 @@ private:
 public:
     Sensor(uint8_t addr = 0x20);
 
+    void begin();    
     uint8_t get_temperature();
+    uint8_t get_moisture();
 };
 
 #endif
