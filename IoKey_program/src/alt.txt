@@ -2,7 +2,10 @@
 #include <LoRaWan-Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
+#include <esp_sleep.h>
+#include <driver/rtc_io.h>
 
+#define LORAWAN_REGION_IOKEY LORAMAC_REGION_EU868
 // LoRaWan setup definitions
 #define SCHED_MAX_EVENT_DATA_SIZE APP_TIMER_SCHED_EVENT_DATA_SIZE // Maximum size of scheduler events
 #define SCHED_QUEUE_SIZE 60	// Maximum number of events in the scheduler queue
@@ -12,7 +15,6 @@
 #define LORAWAN_APP_TX_DUTYCYCLE 5000 // Defines the application data transmission duty cycle. 30s, value in [ms]
 #define APP_TX_DUTYCYCLE_RND 1000 // Defines a random delay for application data transmission duty cycle. 1s, value in [ms]
 #define JOINREQ_NBTRIALS 3	
-#define LORAWAN_REGION_IOKEY LORAMAC_REGION_EU868
 
 bool doOTAA = true;
 hw_config hwConfig;
@@ -26,14 +28,12 @@ hw_config hwConfig;
 #define LORA_MISO GPIO_NUM_11	 // LORA SPI MISO
 #define LORA_BUSY GPIO_NUM_13	 // LORA SPI BUSY
 #define LORA_DIO_1 GPIO_NUM_14 // LORA DIO_1
-int RADIO_TXEN = GPIO_NUM_NC;	 // LORA ANTENNA TX ENABLE
-int RADIO_RXEN = GPIO_NUM_NC;	 // LORA ANTENNA RX ENABLE
 #endif
 
-// Define Helium or TTN OTAA keys. All msb (big endian).
-uint8_t nodeDeviceEUI[8] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
-uint8_t nodeAppEUI[8] = { 0x45, 0x43, 0x4f, 0x4c, 0x45, 0x49, 0x4f, 0x45 };
-uint8_t nodeAppKey[16] = { 0xCE, 0x23, 0x76, 0x27, 0x24, 0x82, 0x78, 0x8C, 0x69, 0x23, 0xED, 0x59, 0x78, 0xDF, 0xF4, 0x5C };
+// Define TTN OTAA keys. All msb (big endian).
+uint8_t device_eui[8] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
+uint8_t application_eui[8] = { 0x45, 0x43, 0x4f, 0x4c, 0x45, 0x49, 0x4f, 0x45 };
+uint8_t application_key[16] = { 0xCE, 0x23, 0x76, 0x27, 0x24, 0x82, 0x78, 0x8C, 0x69, 0x23, 0xED, 0x59, 0x78, 0xDF, 0xF4, 0x5C };
 // Foward declaration
 /** LoRaWAN callback when join network finished */
 static void lorawan_has_joined_handler(void);
@@ -96,8 +96,6 @@ void setup()
 	hwConfig.PIN_LORA_DIO_1 = LORA_DIO_1; // LORA DIO_1
 	hwConfig.PIN_LORA_BUSY = LORA_BUSY;	  // LORA SPI BUSY
 	hwConfig.PIN_LORA_MOSI = LORA_MOSI;	  // LORA SPI MOSI
-	hwConfig.RADIO_TXEN = RADIO_TXEN;	// LORA ANTENNA TX ENABLE (e.g. eByte E22 module)
-	hwConfig.RADIO_RXEN = RADIO_RXEN;	// LORA ANTENNA RX ENABLE (e.g. eByte E22 module)
 	hwConfig.USE_DIO2_ANT_SWITCH = false;	// LORA DIO2 does not control antenna
 	hwConfig.USE_DIO3_TCXO = true;	// LORA DIO3 controls oscillator voltage (e.g. eByte E22 module)
 	hwConfig.USE_DIO3_ANT_SWITCH = false;	// LORA DIO3 does not control antenna
@@ -125,9 +123,9 @@ void setup()
 	}
 
 	// Setup the EUIs and Keys
-	lmh_setDevEui(nodeDeviceEUI);
-	lmh_setAppEui(nodeAppEUI);
-	lmh_setAppKey(nodeAppKey);
+	lmh_setDevEui(device_eui);
+	lmh_setAppEui(application_eui);
+	lmh_setAppKey(application_key);
 
 	// Initialize LoRaWan
 	// CLASS C works for esp32 and e22, US915 region works in america, other local frequencies can be found 
@@ -147,6 +145,13 @@ void setup()
 
 	// Start Join procedure
 	lmh_join();
+    lmh_class_request(CLASS_A);
+
+    Serial.println("Sending frame");
+	send_lora_frame();
+
+
+    esp_deep_sleep_start();
 }
 
 void loop()
@@ -272,11 +277,11 @@ static void send_lora_frame(void)
 	uint32_t i = 0;
 	Ticker ledTicker;
 
-	if (lmh_join_status_get() != LMH_SET)
+	while (lmh_join_status_get() != LMH_SET)
 	{
 		// Not joined, try again later
 		Serial.println("Did not join network, skip sending frame");
-		return;
+		// return;
 	}
 
 	// Building the message to send
