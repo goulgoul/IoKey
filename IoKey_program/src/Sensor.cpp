@@ -8,7 +8,6 @@ Sensor::Sensor(uint8_t addr): _sensor(nullptr)
 void Sensor::begin()
 {
     _sensor->begin();
-    Wire.begin();
 }
 
 uint8_t Sensor::get_temperature()

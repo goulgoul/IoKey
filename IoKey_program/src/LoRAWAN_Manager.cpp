@@ -1,7 +1,7 @@
 #include <LoRaWAN_Manager.hpp>
 
-LoRaWAN_Manager::LoRaWAN_Manager()
-    : _device_eui(nullptr), _application_eui(nullptr), _application_key(nullptr) 
+LoRaWAN_Manager::LoRaWAN_Manager(void)
+    : _device_eui(nullptr), _application_eui(nullptr), _application_key(nullptr), _hw_config()
 {
     _device_eui = new uint8_t[8];
     for (int i = 0; i < 8; i++)
@@ -20,9 +20,10 @@ LoRaWAN_Manager::LoRaWAN_Manager()
     {
         _application_key[i] = 0x00;
     }
+    
 }
 
-LoRaWAN_Manager* LoRaWAN_Manager::get_instance()
+LoRaWAN_Manager* LoRaWAN_Manager::get_instance(void)
 {
     if (_instance == nullptr)
     {
@@ -53,10 +54,46 @@ lorawan_manager_error_t LoRaWAN_Manager::begin(const uint8_t dev_eui[8], const u
         _application_key[i] = app_key[i];
     }
 
+	// Define the HW configuration between MCU and SX126x
+	_hw_config.CHIP_TYPE = SX1262_CHIP;	// Example uses an eByte E22 module with an SX1262
+	_hw_config.PIN_LORA_RESET = LORA_RESET; // LORA RESET
+	_hw_config.PIN_LORA_NSS = LORA_NSS;	  // LORA SPI CS
+	_hw_config.PIN_LORA_SCLK = LORA_SCLK;	  // LORA SPI CLK
+	_hw_config.PIN_LORA_MISO = LORA_MISO;	  // LORA SPI MISO
+	_hw_config.PIN_LORA_DIO_1 = LORA_DIO_1; // LORA DIO_1
+	_hw_config.PIN_LORA_BUSY = LORA_BUSY;	  // LORA SPI BUSY
+	_hw_config.PIN_LORA_MOSI = LORA_MOSI;	  // LORA SPI MOSI
+	_hw_config.USE_DIO2_ANT_SWITCH = false;	// LORA DIO2 does not control antenna
+	_hw_config.USE_DIO3_TCXO = true;	// LORA DIO3 controls oscillator voltage (e.g. eByte E22 module)
+	_hw_config.USE_DIO3_ANT_SWITCH = false;	// LORA DIO3 does not control antenna
+
+    // Initialize LoRa chip.
+	uint32_t err_code = lora_hardware_init(_hw_config);
+	if (err_code != 0)
+	{
+        return SX1262_INIT_ERROR;
+	}
+
+    // Setup the EUIs and Keys
+	lmh_setDevEui(_device_eui);
+	lmh_setAppEui(_application_eui);
+	lmh_setAppKey(_application_key);
+
+    err_code = lmh_init(&lora_callbacks, lora_param_init, OTAA_ENABLED, CLASS_A, LORAWAN_REGION_IOKEY);
+	if (err_code != 0)
+	{
+		Serial.printf("lmh_init failed - %d\n", err_code);
+        return SX1262_INIT_ERROR;
+
+	}
+
+    lmh_setSubBandChannels(2);
+
+
     return OKAY;
 }
 
-void LoRaWAN_Manager::print_parameters()
+void LoRaWAN_Manager::print_parameters(void)
 {
     Serial.print("Device EUI: ");
     for (int i = 0; i < 8; i++)
@@ -80,7 +117,53 @@ void LoRaWAN_Manager::print_parameters()
     Serial.print('\n');
 }
 
+lorawan_manager_error_t LoRaWAN_Manager::join(void)
+{
+    Serial.println("Attempting to join TTN...");
+    lmh_join();
+    lmh_class_request(CLASS_A);
 
+
+    int join_counter = 0;
+
+	while (lmh_join_status_get() != LMH_SET)
+	{
+        join_counter += 100;
+		delay(100);
+	}
+
+    if (join_counter > LORAWAN_JOIN_TIMEOUT_MS)
+    {
+        return JOINING_TIMEOUT;
+    }
+
+    return OKAY;
+}
+
+lorawan_manager_error_t LoRaWAN_Manager::send_data(const uint8_t* data, const uint8_t frame_length)
+{
+    Serial.println("Attempting to send data...");
+    // Building the message to send
+    uint8_t lorawan_frame_buffer[LORAWAN_APP_DATA_BUFF_SIZE]; // Lora user application data buffer.
+    lmh_app_data_t lorawan_frame_struct = {lorawan_frame_buffer, 0, 0, 0, 0};	 // Lora user application data structure.
+
+	lorawan_frame_struct.port = LORAWAN_APP_PORT;
+    for (int i = 0; i < frame_length; i++)
+    {
+        lorawan_frame_struct.buffer[i] = data[i];
+    }
+    lorawan_frame_struct.buffsize = frame_length;
+
+
+
+	lmh_error_status error = lmh_send(&lorawan_frame_struct, LMH_UNCONFIRMED_MSG);
+    Serial.println(error);
+    if (error != 0)
+    {
+        return FRAME_NOT_SENT;
+    }
+
+}
 
 
 
