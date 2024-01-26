@@ -157,12 +157,12 @@ lorawan_manager_error_t LoRaWAN_Manager::send_data(const uint8_t* data, const ui
 
 
 	lmh_error_status error = lmh_send(&lorawan_frame_struct, LMH_UNCONFIRMED_MSG);
-    Serial.println(error);
-    if (error != 0)
+    if (error == -1)
     {
         return FRAME_NOT_SENT;
     }
 
+    return OKAY;
 }
 
 

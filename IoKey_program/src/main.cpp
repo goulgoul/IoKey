@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <LoRaWAN_Manager.hpp>
 #include <Sensor.h>
+#include <driver/rtc_cntl.h>
+#include <esp_sleep.h>
 
 #define FRAME_LENGTH 8
 
@@ -15,12 +17,45 @@ Sensor sensor1(0x20);
 Sensor sensor2(0x21);
 Sensor sensor3(0x22);
 
-uint8_t data_to_send[FRAME_LENGTH];
+
+RTC_DATA_ATTR uint8_t boot_count = 0;
+
+uint8_t* pack_data()
+{
+    uint8_t *data_to_send = new uint8_t[FRAME_LENGTH];
+
+    data_to_send[0] = 1;    //Device ID
+    data_to_send[1] = 48;   //Battery level
+    // data_to_send[2] = sensor1.get_temperature();
+    // data_to_send[3] = sensor2.get_temperature();
+    // data_to_send[4] = sensor3.get_temperature();
+    // data_to_send[5] = sensor1.get_moisture();
+    // data_to_send[6] = sensor2.get_moisture();
+    // data_to_send[7] = sensor3.get_moisture();
+    data_to_send[2] = boot_count; 
+    data_to_send[3] = 18;
+    data_to_send[4] = 18;
+    data_to_send[5] = boot_count;
+    data_to_send[6] = 18;
+    data_to_send[7] = 18;
+
+    return data_to_send;
+}
+
+void go_to_sleep()
+{
+    Serial.println("Going to sleep...");
+    Serial.println("\n=============================\n");
+
+    esp_sleep_enable_timer_wakeup(30 * 1e6);
+
+    esp_deep_sleep_start();
+}
 
 void setup()
 {
     Serial.begin(115200);
-    delay(1000);
+    Serial.println("\n=============================\n");
 
     Wire.begin();
     Wire.setClock(10000);
@@ -34,29 +69,15 @@ void setup()
     lora->print_parameters();
 
     lora->join();
- 
+
+    lora->send_data((const uint8_t*)pack_data(), FRAME_LENGTH);
+
+    go_to_sleep();
 }
 
 
 
 void loop() 
 {
-    
-    data_to_send[0] = 33;
-    data_to_send[1] = 1;
-    // data_to_send[2] = sensor1.get_temperature();
-    // data_to_send[3] = sensor2.get_temperature();
-    // data_to_send[4] = sensor3.get_temperature();
-    // data_to_send[5] = sensor1.get_moisture();
-    // data_to_send[6] = sensor2.get_moisture();
-    // data_to_send[7] = sensor3.get_moisture();
-    data_to_send[2] = 18;
-    data_to_send[3] = 18;
-    data_to_send[4] = 18;
-    data_to_send[5] = 18;
-    data_to_send[6] = 18;
-    data_to_send[7] = 18;
-
-    lora->send_data(data_to_send, FRAME_LENGTH);
-    delay(5000);
 }
+
