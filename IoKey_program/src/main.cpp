@@ -18,8 +18,7 @@ RTC_DATA_ATTR uint8_t boot_count = 0;
 typedef enum machine_states_enum
 {
     WAKE_UP,
-    INITIALIZATION,
-    MEASUREMENT,
+    DATE_SERIALIZATION,
     MESSAGE_SENDING,
     BLE,
     DEEP_SLEEP
@@ -33,6 +32,14 @@ uint8_t data_to_send[LORAWAN_FRAME_LENGTH] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 void setup()
 {
+    Serial.begin(BAUD_RATE);
+
+    Wire.begin();
+    Wire.setClock(I2C_CLOCK_SPEED);
+
+    top_sensor.begin();
+    middle_sensor.begin();
+    bottom_sensor.begin();
 }
 
 void loop()
@@ -46,34 +53,18 @@ void loop()
             state = BLE;
             break;
         case ESP_SLEEP_WAKEUP_TIMER:
-            state = INITIALIZATION;
+            state = DATE_SERIALIZATION;
             break;
         default:
-            state = INITIALIZATION;
+            Serial.println("In case WAKE_UP: No routine found for this use case, defaulting to deep sleep mode...");
+            state = DEEP_SLEEP;
             break;
         }
         break;
 
-    case INITIALIZATION:
-        Serial.begin(BAUD_RATE);
-
-        Wire.begin();
-        Wire.setClock(I2C_CLOCK_SPEED);
-
-        top_sensor.begin();
-        middle_sensor.begin();
-        bottom_sensor.begin();
-
-        lora->begin(lorawan_dev_eui, lorawan_app_eui, lorawan_app_key);
-
-        // lora->print_parameters();
-
-        state = MEASUREMENT;
-        break;
-
-    case MEASUREMENT:
-        data_to_send[0] = 1;    //? Device ID with respect to the use case
-        data_to_send[1] = 49;   //? Battery percentage
+    case DATE_SERIALIZATION:
+        data_to_send[0] = 1;  //? Device ID with respect to the use case
+        data_to_send[1] = 49; //? Battery percentage
         data_to_send[2] = top_sensor.get_temperature();
         data_to_send[3] = middle_sensor.get_temperature();
         data_to_send[4] = bottom_sensor.get_temperature();
@@ -84,6 +75,8 @@ void loop()
         break;
 
     case MESSAGE_SENDING:
+        lora->begin(lorawan_dev_eui, lorawan_app_eui, lorawan_app_key);
+
         lora->join();
 
         lora->send_data((const uint8_t *)data_to_send, LORAWAN_FRAME_LENGTH);
@@ -97,7 +90,6 @@ void loop()
         break;
 
     case BLE:
-
 
         state = DEEP_SLEEP;
         break;
