@@ -18,13 +18,13 @@ RTC_DATA_ATTR uint8_t boot_count = 0;
 typedef enum machine_states_enum
 {
     WAKE_UP,
-    DATE_SERIALIZATION,
-    MESSAGE_SENDING,
+    DATA_SERIALIZATION,
+    DATA_UPLOAD,
     BLE,
     DEEP_SLEEP
 } machine_states_t;
 
-machine_states_t state = INITIALIZATION;
+machine_states_t state = DATA_SERIALIZATION;
 
 esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
@@ -53,7 +53,7 @@ void loop()
             state = BLE;
             break;
         case ESP_SLEEP_WAKEUP_TIMER:
-            state = DATE_SERIALIZATION;
+            state = DATA_SERIALIZATION;
             break;
         default:
             Serial.println("In case WAKE_UP: No routine found for this use case, defaulting to deep sleep mode...");
@@ -62,7 +62,8 @@ void loop()
         }
         break;
 
-    case DATE_SERIALIZATION:
+    case DATA_SERIALIZATION:
+        Serial.println(state);
         data_to_send[0] = 1;  //? Device ID with respect to the use case
         data_to_send[1] = 49; //? Battery percentage
         data_to_send[2] = top_sensor.get_temperature();
@@ -71,10 +72,17 @@ void loop()
         data_to_send[5] = top_sensor.get_moisture();
         data_to_send[6] = middle_sensor.get_moisture();
         data_to_send[7] = bottom_sensor.get_moisture();
-        state = MESSAGE_SENDING;
+
+        for (int i = 0; i < LORAWAN_FRAME_LENGTH; i++)
+        {
+            Serial.printf("{} ", data_to_send[i]);
+        }
+        Serial.println();
+
+        state = DATA_UPLOAD;
         break;
 
-    case MESSAGE_SENDING:
+    case DATA_UPLOAD:
         lora->begin(lorawan_dev_eui, lorawan_app_eui, lorawan_app_key);
 
         lora->join();
@@ -85,7 +93,6 @@ void loop()
         break;
 
     case DEEP_SLEEP:
-        esp_sleep_enable_ext0_wakeup(GPIO_NUM_7, 1);
         go_to_sleep();
         break;
 
@@ -95,6 +102,8 @@ void loop()
         break;
 
     default:
+        state = DEEP_SLEEP;
+        Serial.printf("In case DEFAULT: variable state was {}, defaulting to deep sleep mode...\n", state);
         break;
     }
 }
