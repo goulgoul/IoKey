@@ -1,4 +1,5 @@
-#include <LoRaWAN_Manager.hpp>
+#include <lorawan_manager.hpp>
+#include <global_config.h>
 
 LoRaWAN_Manager::LoRaWAN_Manager(void)
     : _device_eui(nullptr), _application_eui(nullptr), _application_key(nullptr), _hw_config()
@@ -29,7 +30,6 @@ LoRaWAN_Manager* LoRaWAN_Manager::get_instance(void)
     {
         _instance = new LoRaWAN_Manager();
     }
-    // static LoRaWAN_Manager* instance = new LoRaWAN_Manager(dev_eui, app_eui, app_key);
     return _instance;
 }
 
@@ -140,7 +140,7 @@ lorawan_manager_error_t LoRaWAN_Manager::join(void)
     return OKAY;
 }
 
-lorawan_manager_error_t LoRaWAN_Manager::send_data(const uint8_t* data, const uint8_t frame_length)
+lorawan_manager_error_t LoRaWAN_Manager::send_data(const uint8_t data[LORAWAN_FRAME_LENGTH], const uint8_t frame_length)
 {
     Serial.println("Attempting to send data...");
     // Building the message to send

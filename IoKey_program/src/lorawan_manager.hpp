@@ -1,10 +1,11 @@
-#ifndef LORAWAN_MANAGER_H
-#define LORAWAN_MANAGER_H
+#ifndef Lorawan_Manager_h
+#define Lorawan_Manager_h
 
 #include <Arduino.h>
 #include <LoRaWan-Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
+
 
 #define LORA_NSS GPIO_NUM_8
 #define LORA_SCLK GPIO_NUM_9
@@ -70,7 +71,7 @@ public:
 
     void print_parameters(void);
     lorawan_manager_error_t join(void);
-    lorawan_manager_error_t send_data(const uint8_t*, const uint8_t);
+    lorawan_manager_error_t send_data(const uint8_t[], const uint8_t);
 };
 
 

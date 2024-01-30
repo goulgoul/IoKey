@@ -1,83 +1,109 @@
 #include <Arduino.h>
-#include <LoRaWAN_Manager.hpp>
-#include <Sensor.h>
+#include <global_config.h>
+#include <lorawan_manager.hpp>
+#include <temperature_moisture_sensor.hpp>
 #include <driver/rtc_cntl.h>
 #include <esp_sleep.h>
+#include <sleep_functions.hpp>
 
-#define FRAME_LENGTH 8
+LoRaWAN_Manager *LoRaWAN_Manager::_instance = nullptr;
+LoRaWAN_Manager *lora = lora->get_instance();
 
-const uint8_t dev_eui[8] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
-const uint8_t app_eui[8] = { 0x45, 0x43, 0x4f, 0x4c, 0x45, 0x49, 0x4f, 0x45 };
-const uint8_t app_key[16] = { 0xCE, 0x23, 0x76, 0x27, 0x24, 0x82, 0x78, 0x8C, 0x69, 0x23, 0xED, 0x59, 0x78, 0xDF, 0xF4, 0x5C };
-
-LoRaWAN_Manager* LoRaWAN_Manager::_instance = nullptr;
-LoRaWAN_Manager* lora = lora->get_instance();
-
-Sensor sensor1(0x20);
-Sensor sensor2(0x21);
-Sensor sensor3(0x22);
-
+TemperatureMoistureSensor top_sensor(SENSOR_ADDRESS_TOP);
+TemperatureMoistureSensor middle_sensor(SENSOR_ADDRESS_MIDDLE);
+TemperatureMoistureSensor bottom_sensor(SENSOR_ADDRESS_BOTTOM);
 
 RTC_DATA_ATTR uint8_t boot_count = 0;
 
-uint8_t* pack_data()
+typedef enum machine_states_enum
 {
-    uint8_t *data_to_send = new uint8_t[FRAME_LENGTH];
+    WAKE_UP,
+    INITIALIZATION,
+    MEASUREMENT,
+    MESSAGE_SENDING,
+    BLE,
+    DEEP_SLEEP
+} machine_states_t;
 
-    data_to_send[0] = 1;    //Device ID
-    data_to_send[1] = 48;   //Battery level
-    // data_to_send[2] = sensor1.get_temperature();
-    // data_to_send[3] = sensor2.get_temperature();
-    // data_to_send[4] = sensor3.get_temperature();
-    // data_to_send[5] = sensor1.get_moisture();
-    // data_to_send[6] = sensor2.get_moisture();
-    // data_to_send[7] = sensor3.get_moisture();
-    data_to_send[2] = boot_count; 
-    data_to_send[3] = 18;
-    data_to_send[4] = 18;
-    data_to_send[5] = boot_count;
-    data_to_send[6] = 18;
-    data_to_send[7] = 18;
+machine_states_t state = INITIALIZATION;
 
-    return data_to_send;
-}
+esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
-void go_to_sleep()
-{
-    Serial.println("Going to sleep...");
-    Serial.println("\n=============================\n");
-
-    esp_sleep_enable_timer_wakeup(30 * 1e6);
-
-    esp_deep_sleep_start();
-}
+uint8_t data_to_send[LORAWAN_FRAME_LENGTH] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 void setup()
 {
-    Serial.begin(115200);
-    Serial.println("\n=============================\n");
-
-    Wire.begin();
-    Wire.setClock(10000);
-
-    // sensor1.begin(); 
-    // sensor2.begin();
-    // sensor3.begin();
-
-    lora->begin(dev_eui, app_eui, app_key);
-
-    lora->print_parameters();
-
-    lora->join();
-
-    lora->send_data((const uint8_t*)pack_data(), FRAME_LENGTH);
-
-    go_to_sleep();
 }
 
-
-
-void loop() 
+void loop()
 {
-}
+    switch (state)
+    {
+    case WAKE_UP:
+        switch (wakeup_cause)
+        {
+        case ESP_SLEEP_WAKEUP_EXT0:
+            state = BLE;
+            break;
+        case ESP_SLEEP_WAKEUP_TIMER:
+            state = INITIALIZATION;
+            break;
 
+        default:
+            break;
+        }
+        break;
+    case INITIALIZATION:
+        Serial.begin(BAUD_RATE);
+
+        Wire.begin();
+        delay(1000);
+        Wire.setClock(I2C_CLOCK_SPEED);
+        delay(1000);
+
+        lora->begin(lorawan_dev_eui, lorawan_app_eui, lorawan_app_key);
+        lora->print_parameters();
+
+        top_sensor.begin();
+        middle_sensor.begin();
+        bottom_sensor.begin();
+
+        state = MEASUREMENT;
+        break;
+
+    case MEASUREMENT:
+        data_to_send[0] = 0x01;
+        data_to_send[1] = 49;
+        data_to_send[2] = top_sensor.get_temperature();
+        data_to_send[3] = middle_sensor.get_temperature();
+        data_to_send[4] = bottom_sensor.get_temperature();
+        data_to_send[5] = top_sensor.get_moisture();
+        data_to_send[6] = middle_sensor.get_moisture();
+        data_to_send[7] = bottom_sensor.get_moisture();
+        state = MESSAGE_SENDING;
+        break;
+
+    case MESSAGE_SENDING:
+        for (int i = 0; i < LORAWAN_FRAME_LENGTH; i++)
+        {
+            Serial.print(data_to_send[i]);
+            Serial.print(" ");
+        }
+        Serial.println();
+
+        lora->join();
+
+        lora->send_data((const uint8_t *)data_to_send, LORAWAN_FRAME_LENGTH);
+
+        state = DEEP_SLEEP;
+        break;
+
+    case DEEP_SLEEP:
+        esp_sleep_enable_ext0_wakeup(GPIO_NUM_7, 1);
+        go_to_sleep();
+        break;
+
+    default:
+        break;
+    }
+}

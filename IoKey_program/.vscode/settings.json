@@ -9,6 +9,10 @@
         "unordered_set": "cpp",
         "vector": "cpp",
         "string_view": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "new": "cpp",
+        "*.tcc": "cpp",
+        "memory": "cpp",
+        "random": "cpp"
     }
 }
