@@ -15,8 +15,6 @@
 #define LORA_BUSY GPIO_NUM_13	
 #define LORA_DIO_1 GPIO_NUM_14 
 
-#define LORAWAN_JOIN_TIMEOUT_MS 30000
-
 
 #define LORAWAN_REGION_IOKEY LORAMAC_REGION_EU868
 // LoRaWan setup definitions
@@ -47,7 +45,7 @@ typedef enum lorawan_manager_errors
 } 
 lorawan_manager_error_t;
 
-class LoRaWAN_Manager 
+class LoRaWANManager 
 {
 private:
     uint8_t* _device_eui;
@@ -55,17 +53,17 @@ private:
     uint8_t* _application_key;
     hw_config _hw_config;
 
-    static LoRaWAN_Manager* _instance;
+    static LoRaWANManager* _instance;
 
-    LoRaWAN_Manager();
-    ~LoRaWAN_Manager();
+    LoRaWANManager();
+    ~LoRaWANManager();
     
 
 public:
-    LoRaWAN_Manager(const LoRaWAN_Manager&) = delete;
-    void operator=(const LoRaWAN_Manager&) = delete;
+    LoRaWANManager(const LoRaWANManager&) = delete;
+    void operator=(const LoRaWANManager&) = delete;
     
-    static LoRaWAN_Manager* get_instance(void);
+    static LoRaWANManager* get_instance(void);
 
     lorawan_manager_error_t begin(const uint8_t[], const uint8_t[], const uint8_t[]);
 
@@ -74,13 +72,6 @@ public:
     lorawan_manager_error_t send_data(const uint8_t[], const uint8_t);
 };
 
-
-
-//? LoRaWAN_Manager* LoRaWAN_Manager::_instance = nullptr;
-
-
-
-
-
+//? LoRaWANManager* LoRaWANManager::_instance = nullptr;
 
 #endif // __LORAWAN_MANAGER_H__

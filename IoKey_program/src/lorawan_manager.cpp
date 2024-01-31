@@ -1,7 +1,7 @@
 #include <lorawan_manager.hpp>
 #include <global_config.h>
 
-LoRaWAN_Manager::LoRaWAN_Manager(void)
+LoRaWANManager::LoRaWANManager(void)
     : _device_eui(nullptr), _application_eui(nullptr), _application_key(nullptr), _hw_config()
 {
     _device_eui = new uint8_t[8];
@@ -24,16 +24,16 @@ LoRaWAN_Manager::LoRaWAN_Manager(void)
     
 }
 
-LoRaWAN_Manager* LoRaWAN_Manager::get_instance(void)
+LoRaWANManager* LoRaWANManager::get_instance(void)
 {
     if (_instance == nullptr)
     {
-        _instance = new LoRaWAN_Manager();
+        _instance = new LoRaWANManager();
     }
     return _instance;
 }
 
-lorawan_manager_error_t LoRaWAN_Manager::begin(const uint8_t dev_eui[8], const uint8_t app_eui[8], const uint8_t app_key[16])
+lorawan_manager_error_t LoRaWANManager::begin(const uint8_t dev_eui[8], const uint8_t app_eui[8], const uint8_t app_key[16])
 {
     if (_instance == nullptr)
     {
@@ -93,7 +93,7 @@ lorawan_manager_error_t LoRaWAN_Manager::begin(const uint8_t dev_eui[8], const u
     return OKAY;
 }
 
-void LoRaWAN_Manager::print_parameters(void)
+void LoRaWANManager::print_parameters(void)
 {
     Serial.print("Device EUI: ");
     for (int i = 0; i < 8; i++)
@@ -117,7 +117,7 @@ void LoRaWAN_Manager::print_parameters(void)
     Serial.print('\n');
 }
 
-lorawan_manager_error_t LoRaWAN_Manager::join(void)
+lorawan_manager_error_t LoRaWANManager::join(void)
 {
     Serial.println("Attempting to join TTN...");
     lmh_join();
@@ -128,19 +128,19 @@ lorawan_manager_error_t LoRaWAN_Manager::join(void)
 
 	while (lmh_join_status_get() != LMH_SET)
 	{
-        join_counter += 100;
-		delay(100);
+        join_counter++;
+        if (join_counter >= LORAWAN_JOIN_TIMEOUT_S)
+        {
+            return JOINING_TIMEOUT;
+        }
+		delay(1000);
 	}
 
-    if (join_counter > LORAWAN_JOIN_TIMEOUT_MS)
-    {
-        return JOINING_TIMEOUT;
-    }
 
     return OKAY;
 }
 
-lorawan_manager_error_t LoRaWAN_Manager::send_data(const uint8_t data[LORAWAN_FRAME_LENGTH], const uint8_t frame_length)
+lorawan_manager_error_t LoRaWANManager::send_data(const uint8_t data[LORAWAN_FRAME_LENGTH], const uint8_t frame_length)
 {
     Serial.println("Attempting to send data...");
     // Building the message to send
@@ -169,7 +169,7 @@ lorawan_manager_error_t LoRaWAN_Manager::send_data(const uint8_t data[LORAWAN_FR
 
 
 
-LoRaWAN_Manager::~LoRaWAN_Manager()
+LoRaWANManager::~LoRaWANManager()
 {
     _device_eui = NULL;
     _application_eui = NULL;
