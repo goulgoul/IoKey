@@ -157,7 +157,7 @@ lorawan_manager_error_t LoRaWANManager::send_data(const uint8_t data[LORAWAN_FRA
 
 
 	lmh_error_status error = lmh_send(&lorawan_frame_struct, LMH_UNCONFIRMED_MSG);
-    if (error == -1)
+    if (error == LMH_ERROR)
     {
         return FRAME_NOT_SENT;
     }

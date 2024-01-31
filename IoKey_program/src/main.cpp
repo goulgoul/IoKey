@@ -98,7 +98,11 @@ void loop()
             break;
         }
 
-        lorawan->send_data((const uint8_t *)data_to_send, LORAWAN_FRAME_LENGTH);
+        if (lorawan->send_data((const uint8_t *)data_to_send, LORAWAN_FRAME_LENGTH) == FRAME_NOT_SENT)
+        {
+            Serial.println("Could not send data to TTN, please try again later.");
+        }
+        Serial.println("Successfully sent data, going to deep sleep.");
 
         state = DEEP_SLEEP;
         break;
