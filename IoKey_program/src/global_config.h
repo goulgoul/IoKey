@@ -10,7 +10,7 @@
 
 
 #define DEVICE_ID 1
-#define TIME_TO_SLEEP_SECONDS 10
+#define TIME_TO_SLEEP_SECONDS 300
 
 
 const uint8_t lorawan_dev_eui[8] = {0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02};

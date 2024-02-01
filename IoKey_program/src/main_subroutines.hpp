@@ -96,6 +96,8 @@ void deep_sleep_subroutine(void)
 void ble_subroutine(void)
 {
     Serial.printf("\nBLE (%d)\n", state);
+
+    ble->begin("IoKey_" + char(DEVICE_ID));
 }
 
 void default_subroutine(void)
