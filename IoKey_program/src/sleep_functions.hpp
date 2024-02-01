@@ -7,7 +7,6 @@
 
 #define MICROSECONDS_TO_SECONDS 1000000ULL /* Conversion factor for micro seconds to seconds */
 
-
 void go_to_sleep()
 {
     rtc_gpio_deinit(DEEP_SLEEP_WAKEUP_PIN);

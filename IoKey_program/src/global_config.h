@@ -3,8 +3,14 @@
 #include <stdint.h>
 
 
+//!
+#define __DEBUG__
+//!
+
+
+
 #define DEVICE_ID 1
-#define TIME_TO_SLEEP_SECONDS 3600
+#define TIME_TO_SLEEP_SECONDS 10
 
 
 const uint8_t lorawan_dev_eui[8] = {0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02};
@@ -15,7 +21,7 @@ const uint8_t lorawan_app_key[16] = {0xCE, 0x23, 0x76, 0x27, 0x24, 0x82, 0x78, 0
 #define SENSOR_ADDRESS_MIDDLE 0x30
 #define SENSOR_ADDRESS_BOTTOM 0x40
 
-#define LORAWAN_JOIN_TIMEOUT_S 10
+#define LORAWAN_JOIN_TIMEOUT_S 30
 #define LORAWAN_FRAME_LENGTH 8
 #define DEEP_SLEEP_WAKEUP_PIN GPIO_NUM_7
 
@@ -24,7 +30,7 @@ const uint8_t lorawan_app_key[16] = {0xCE, 0x23, 0x76, 0x27, 0x24, 0x82, 0x78, 0
 
 #define BLE_SERVER_NAME String(DEVICE_ID)
 
-// void gigascan()
+// void i2c_scan()
 // {
 //     Wire.begin();
 

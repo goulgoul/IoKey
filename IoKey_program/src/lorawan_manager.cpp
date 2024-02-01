@@ -34,7 +34,7 @@ LoRaWANManager* LoRaWANManager::get_instance(void)
 }
 
 lorawan_manager_error_t LoRaWANManager::begin(const uint8_t dev_eui[8], const uint8_t app_eui[8], const uint8_t app_key[16])
-{
+{   
     if (_instance == nullptr)
     {
         return NO_INSTANCE_INITIALISED;
@@ -82,9 +82,7 @@ lorawan_manager_error_t LoRaWANManager::begin(const uint8_t dev_eui[8], const ui
     err_code = lmh_init(&lora_callbacks, lora_param_init, OTAA_ENABLED, CLASS_A, LORAWAN_REGION_IOKEY);
 	if (err_code != 0)
 	{
-		Serial.printf("lmh_init failed - %d\n", err_code);
         return SX1262_INIT_ERROR;
-
 	}
 
     lmh_setSubBandChannels(2);
@@ -95,21 +93,21 @@ lorawan_manager_error_t LoRaWANManager::begin(const uint8_t dev_eui[8], const ui
 
 void LoRaWANManager::print_parameters(void)
 {
-    Serial.print("Device EUI: ");
+    Serial.print("\tDevice EUI: ");
     for (int i = 0; i < 8; i++)
     {
         Serial.print(_device_eui[i], HEX);
     }
     Serial.print('\n');
 
-    Serial.print("Application EUI: ");
+    Serial.print("\tApplication EUI: ");
     for (int i = 0; i < 8; i++)
     {
         Serial.print(_application_eui[i], HEX);
     }
     Serial.print('\n');
 
-    Serial.print("Application key: ");
+    Serial.print("\tApplication key: ");
     for (int i = 0; i < 8; i++)
     {
         Serial.print(_application_key[i], HEX);
@@ -119,7 +117,7 @@ void LoRaWANManager::print_parameters(void)
 
 lorawan_manager_error_t LoRaWANManager::join(void)
 {
-    Serial.println("Attempting to join TTN...");
+    Serial.println("\tAttempting to join TTN...");
     lmh_join();
     lmh_class_request(CLASS_A);
 
@@ -142,7 +140,7 @@ lorawan_manager_error_t LoRaWANManager::join(void)
 
 lorawan_manager_error_t LoRaWANManager::send_data(const uint8_t data[LORAWAN_FRAME_LENGTH], const uint8_t frame_length)
 {
-    Serial.println("Attempting to send data...");
+    Serial.println("\tAttempting to send data...");
     // Building the message to send
     uint8_t lorawan_frame_buffer[LORAWAN_APP_DATA_BUFF_SIZE]; // Lora user application data buffer.
     lmh_app_data_t lorawan_frame_struct = {lorawan_frame_buffer, 0, 0, 0, 0};	 // Lora user application data structure.

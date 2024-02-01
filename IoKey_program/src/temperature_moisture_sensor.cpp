@@ -25,7 +25,9 @@ int8_t TemperatureMoistureSensor::get_temperature()
 unsigned int TemperatureMoistureSensor::get_moisture()
 {
     unsigned int capacitance = _sensor->getCapacitance();
-    return map(capacitance, MIN_CAPACITANCE_VALUE, MAX_CAPACITANCE_VALUE, 0, 100);
+    while (_sensor->isBusy());
+    capacitance = _sensor->getCapacitance();
+    return map(capacitance, MIN_CAPACITANCE_VALUE, MAX_CAPACITANCE_VALUE, 60, 100);
 }
 
 bool TemperatureMoistureSensor::set_address(uint8_t address)
