@@ -2,7 +2,7 @@
 #include <global_config.h>
 
 BLEManager* BLEManager::_instance = nullptr;
-
+bool __ble_connected = false;
 
 BLEManager::BLEManager(void)
     :_is_connected(false), _server(nullptr), _device_information_service(nullptr), _sensor_service(nullptr)
@@ -92,18 +92,17 @@ void BLEManager::begin(const char *server_name, const uint8_t* data)
 
 bool BLEManager::is_connected()
 {
-    return _is_connected;
+    return __ble_connected;
 }
 
 void BLEManager::onConnect(BLEServer* server)
 {
-    Serial.println("Connected");
-    _is_connected = true;
+    __ble_connected = true;
 }
 
 void BLEManager::onDisconnect(BLEServer* server)
 {
-    _is_connected = false;
+    __ble_connected = false;
 }
 
 BLEManager::~BLEManager()

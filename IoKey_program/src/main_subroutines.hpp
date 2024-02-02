@@ -105,13 +105,26 @@ void ble_subroutine(void)
     int8_t t3 = bottom_sensor.get_temperature();
     uint8_t m3 = bottom_sensor.get_temperature();
 
-
     ble->begin("IoKey_1", data_to_send);
-    while (!ble->is_connected() || !digitalRead(DEEP_SLEEP_WAKEUP_PIN))
+
+    int counter = 0;
+    while (!ble->is_connected())
+    {
+        if (counter >= BLE_CONNECT_TIMEOUT_S)
+        {
+            Serial.println("\tBLE took too long to connect, exitting...");
+            break;
+        }
+
+        Serial.println("\tWaiting for ble to connect...");
+        counter++;
+        delay(1000);
+    }
+    Serial.println("\tBLE connected successfully, please check your phone.");
+
+    while (ble->is_connected())
         ;
-        
-    while (ble->is_connected() || !digitalRead(DEEP_SLEEP_WAKEUP_PIN))
-        ;
+    Serial.println("\tBLE disconneted successfully, going to deep sleep.");
 }
 
 void default_subroutine(void)
