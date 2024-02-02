@@ -33,7 +33,7 @@ esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
 uint8_t data_to_send[LORAWAN_FRAME_LENGTH] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-machine_states_t set_wakeup_routine(void)
+machine_states_t set_routine(void)
 {
     Serial.printf("\nWAKE_UP (%d)\n", state);
 
@@ -41,7 +41,7 @@ machine_states_t set_wakeup_routine(void)
     {
         return BLE;
     }
-    return DATA_SERIALIZATION;
+    return DATA_UPLOAD;
 }
 
 void acquisition_and_serialization_subroutine(void)
@@ -97,7 +97,20 @@ void ble_subroutine(void)
 {
     Serial.printf("\nBLE (%d)\n", state);
 
-    ble->begin("IoKey_" + char(DEVICE_ID));
+    float vbat = 3.7;
+    int8_t t1 = top_sensor.get_temperature();
+    uint8_t m1 = top_sensor.get_temperature();
+    int8_t t2 = middle_sensor.get_temperature();
+    uint8_t m2 = middle_sensor.get_temperature();
+    int8_t t3 = bottom_sensor.get_temperature();
+    uint8_t m3 = bottom_sensor.get_temperature();
+
+
+    ble->begin("IoKey_1", data_to_send);
+    while (!ble->is_connected())
+        ;
+    while (ble->is_connected())
+        ;
 }
 
 void default_subroutine(void)
