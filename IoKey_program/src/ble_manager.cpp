@@ -1,7 +1,11 @@
 #include <ble_manager.hpp>
 #include <global_config.h>
 
+BLEManager* BLEManager::_instance = nullptr;
+
+
 BLEManager::BLEManager(void)
+    :_is_connected(false), _server(nullptr), _device_information_service(nullptr), _sensor_service(nullptr)
 {
 }
 
@@ -16,7 +20,7 @@ BLEManager *BLEManager::get_instance(void)
 
 void BLEManager::begin(const char *server_name, const uint8_t* data)
 {
-    int vbat = data[1] * 100;
+    int vbat = data[1];
     int t1 = data[2] * 100;
     int t2 = data[3] * 100;
     int t3 = data[4] * 100;
@@ -35,9 +39,9 @@ void BLEManager::begin(const char *server_name, const uint8_t* data)
     BLECharacteristic *t1_characteristic = new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
     BLECharacteristic *t2_characteristic = new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
     BLECharacteristic *t3_characteristic = new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *m1_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_PERCENTAGE_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *m2_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_PERCENTAGE_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *m3_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_PERCENTAGE_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *m1_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *m2_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *m3_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
 
     BLEDescriptor *vbat_descriptor = new BLEDescriptor(BLEUUID(VOLT_UUID));
     BLEDescriptor *t1_descriptor = new BLEDescriptor(BLEUUID(CELSUIS_TEMPERATURE_UUID));
@@ -91,14 +95,15 @@ bool BLEManager::is_connected()
     return _is_connected;
 }
 
-void BLEManager::onConnect()
+void BLEManager::onConnect(BLEServer* server)
 {
-    _is_connected == true;
+    Serial.println("Connected");
+    _is_connected = true;
 }
 
-void BLEManager::onDisconnect()
+void BLEManager::onDisconnect(BLEServer* server)
 {
-    _is_connected == false;
+    _is_connected = false;
 }
 
 BLEManager::~BLEManager()

@@ -1,6 +1,9 @@
 #include <lorawan_manager.hpp>
 #include <global_config.h>
 
+
+LoRaWANManager *LoRaWANManager::_instance = nullptr;
+
 LoRaWANManager::LoRaWANManager(void)
     : _device_eui(nullptr), _application_eui(nullptr), _application_key(nullptr), _hw_config()
 {

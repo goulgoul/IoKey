@@ -8,10 +8,7 @@
 #include <temperature_moisture_sensor.hpp>
 #include <sleep_functions.hpp>
 
-LoRaWANManager *LoRaWANManager::_instance = nullptr;
 LoRaWANManager *lorawan = LoRaWANManager::get_instance();
-
-BLEManager *BLEManager::_instance = nullptr;
 BLEManager *ble = BLEManager::get_instance();
 
 TemperatureMoistureSensor top_sensor(SENSOR_ADDRESS_TOP);
@@ -33,10 +30,13 @@ esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
 uint8_t data_to_send[LORAWAN_FRAME_LENGTH] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-machine_states_t set_routine(void)
+void wakeup_subroutine()
 {
     Serial.printf("\nWAKE_UP (%d)\n", state);
+}
 
+machine_states_t set_subroutine(void)
+{
     if (wakeup_cause == ESP_SLEEP_WAKEUP_EXT0)
     {
         return BLE;
@@ -107,9 +107,10 @@ void ble_subroutine(void)
 
 
     ble->begin("IoKey_1", data_to_send);
-    while (!ble->is_connected())
+    while (!ble->is_connected() || !digitalRead(DEEP_SLEEP_WAKEUP_PIN))
         ;
-    while (ble->is_connected())
+        
+    while (ble->is_connected() || !digitalRead(DEEP_SLEEP_WAKEUP_PIN))
         ;
 }
 

@@ -17,12 +17,13 @@ void loop()
     switch (state)
     {
     case WAKE_UP:
+        wakeup_subroutine();
         state = DATA_SERIALIZATION;
         break;
 
     case DATA_SERIALIZATION:
         acquisition_and_serialization_subroutine();
-        state = set_routine();
+        state = set_subroutine();
         break;
 
     case DATA_UPLOAD:
