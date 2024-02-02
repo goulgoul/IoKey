@@ -116,7 +116,7 @@ void ble_subroutine(void)
             break;
         }
 
-        Serial.printf("\tWaiting for ble to connect ; %d seconds remaining...", BLE_CONNECT_TIMEOUT_S - counter);
+        Serial.printf("\tWaiting for ble to connect, %d seconds remaining...\n", BLE_CONNECT_TIMEOUT_S - counter);
         counter++;
         delay(1000);
     }

@@ -33,7 +33,7 @@ void BLEManager::begin(const char *server_name, const uint8_t* data)
     _server->setCallbacks(new BLEManager());
 
     _device_information_service = _server->createService(BLEUUID(DEVICE_INFO_UUID));
-    _sensor_service = _server->createService(BLEUUID(ENVIRONMENTAL_SENSING_UUID));
+    _sensor_service = _server->createService(BLEUUID(ENVIRONMENTAL_SENSING_UUID), 32U);
 
     BLECharacteristic *vbat_characteristic = new BLECharacteristic(BLEUUID(BATTERY_ENERGY_UUID), BLECharacteristic::PROPERTY_READ);
     BLECharacteristic *t1_characteristic = new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
