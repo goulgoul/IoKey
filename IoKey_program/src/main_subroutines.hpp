@@ -110,13 +110,13 @@ void ble_subroutine(void)
     int counter = 0;
     while (!ble->is_connected())
     {
-        if (counter >= BLE_CONNECT_TIMEOUT_S)
+        if (counter > BLE_CONNECT_TIMEOUT_S)
         {
             Serial.println("\tBLE took too long to connect, exitting...");
             break;
         }
 
-        Serial.println("\tWaiting for ble to connect...");
+        Serial.printf("\tWaiting for ble to connect ; %d seconds remaining...", BLE_CONNECT_TIMEOUT_S - counter);
         counter++;
         delay(1000);
     }
