@@ -1,11 +1,11 @@
 #include <ble_manager.hpp>
 #include <global_config.h>
 
-BLEManager* BLEManager::_instance = nullptr;
+BLEManager *BLEManager::_instance = nullptr;
 bool __ble_connected = false;
 
 BLEManager::BLEManager(void)
-    :_is_connected(false), _server(nullptr), _device_information_service(nullptr), _sensor_service(nullptr)
+    : _is_connected(false), _server(nullptr), _device_information_service(nullptr), _sensor_service(nullptr)
 {
 }
 
@@ -18,7 +18,7 @@ BLEManager *BLEManager::get_instance(void)
     return _instance;
 }
 
-void BLEManager::begin(const char *server_name, const uint8_t* data)
+void BLEManager::begin(const char *server_name, const uint8_t *data)
 {
     int vbat = data[1];
     int t1 = data[2] * 100;
@@ -35,13 +35,20 @@ void BLEManager::begin(const char *server_name, const uint8_t* data)
     _device_information_service = _server->createService(BLEUUID(DEVICE_INFO_UUID));
     _sensor_service = _server->createService(BLEUUID(ENVIRONMENTAL_SENSING_UUID), 32U);
 
-    BLECharacteristic *vbat_characteristic = new BLECharacteristic(BLEUUID(BATTERY_ENERGY_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *t1_characteristic = new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *t2_characteristic = new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *t3_characteristic = new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *m1_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *m2_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
-    BLECharacteristic *m3_characteristic = new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *vbat_characteristic =
+        new BLECharacteristic(BLEUUID(BATTERY_ENERGY_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *t1_characteristic =
+        new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *t2_characteristic =
+        new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *t3_characteristic =
+        new BLECharacteristic(BLEUUID(TEMPERATURE_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *m1_characteristic =
+        new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *m2_characteristic =
+        new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
+    BLECharacteristic *m3_characteristic =
+        new BLECharacteristic(BLEUUID(HUMIDITY_UUID), BLECharacteristic::PROPERTY_READ);
 
     BLEDescriptor *vbat_descriptor = new BLEDescriptor(BLEUUID(VOLT_UUID));
     BLEDescriptor *t1_descriptor = new BLEDescriptor(BLEUUID(CELSUIS_TEMPERATURE_UUID));
@@ -66,7 +73,6 @@ void BLEManager::begin(const char *server_name, const uint8_t* data)
     m1_characteristic->addDescriptor(m1_descriptor);
     m2_characteristic->addDescriptor(m2_descriptor);
     m3_characteristic->addDescriptor(m3_descriptor);
-
 
     vbat_characteristic->setValue(vbat);
     t1_characteristic->setValue(t1);
@@ -95,12 +101,12 @@ bool BLEManager::is_connected()
     return __ble_connected;
 }
 
-void BLEManager::onConnect(BLEServer* server)
+void BLEManager::onConnect(BLEServer *server)
 {
     __ble_connected = true;
 }
 
-void BLEManager::onDisconnect(BLEServer* server)
+void BLEManager::onDisconnect(BLEServer *server)
 {
     __ble_connected = false;
 }

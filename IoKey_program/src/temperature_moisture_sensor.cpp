@@ -1,7 +1,6 @@
 #include "temperature_moisture_sensor.hpp"
 
-TemperatureMoistureSensor::TemperatureMoistureSensor(uint8_t address)
-    : _sensor(nullptr)
+TemperatureMoistureSensor::TemperatureMoistureSensor(uint8_t address) : _sensor(nullptr)
 {
     _sensor = new I2CSoilMoistureSensor(address);
 }
@@ -25,7 +24,8 @@ int8_t TemperatureMoistureSensor::get_temperature()
 unsigned int TemperatureMoistureSensor::get_moisture()
 {
     unsigned int capacitance = _sensor->getCapacitance();
-    while (_sensor->isBusy());
+    while (_sensor->isBusy())
+        ;
     capacitance = _sensor->getCapacitance();
     return map(capacitance, MIN_CAPACITANCE_VALUE, MAX_CAPACITANCE_VALUE, 60, 100);
 }

@@ -6,11 +6,10 @@
 
 class TemperatureMoistureSensor
 {
-private: 
-    I2CSoilMoistureSensor* _sensor;
-    
+  private:
+    I2CSoilMoistureSensor *_sensor;
 
-public:
+  public:
     TemperatureMoistureSensor(uint8_t address = DEFAULT_SENSOR_ADDRESS);
     ~TemperatureMoistureSensor();
 
@@ -18,7 +17,12 @@ public:
     int8_t get_temperature();
     unsigned int get_moisture();
     bool set_address(uint8_t);
-//    void sleep();
+    void sleep();
 };
 
- 
+void loop()
+{
+    while ()
+    {
+    }
+}

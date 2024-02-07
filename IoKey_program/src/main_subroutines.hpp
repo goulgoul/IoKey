@@ -2,11 +2,11 @@
 #define Main_Subroutines_h
 
 #include <Arduino.h>
-#include <global_config.h>
 #include <ble_manager.hpp>
+#include <global_config.h>
 #include <lorawan_manager.hpp>
-#include <temperature_moisture_sensor.hpp>
 #include <sleep_functions.hpp>
+#include <temperature_moisture_sensor.hpp>
 
 LoRaWANManager *lorawan = LoRaWANManager::get_instance();
 BLEManager *ble = BLEManager::get_instance();
@@ -57,11 +57,7 @@ void acquisition_and_serialization_subroutine(void)
     data_to_send[6] = middle_sensor.get_moisture();
     data_to_send[7] = bottom_sensor.get_moisture();
 
-<<<<<<< HEAD
-    Serial.print("\tData to send over LoRaWAN:\n\t(id Vb t1 t2 t3 m1 m2 m3)\n\t  ");
-=======
     Serial.print("\tData from measurements:\n\t(id Vb t1 t2 t3 m1 m2 m3)\n\t  ");
->>>>>>> 1d4a5b6 (cleaned project)
     for (int i = 0; i < LORAWAN_FRAME_LENGTH; i++)
     {
         Serial.printf("%d ", data_to_send[i]);
@@ -101,17 +97,6 @@ void ble_subroutine(void)
 {
     Serial.printf("\nBLE (%d)\n", state);
 
-<<<<<<< HEAD
-    float vbat = 3.7;
-    int8_t t1 = top_sensor.get_temperature();
-    uint8_t m1 = top_sensor.get_temperature();
-    int8_t t2 = middle_sensor.get_temperature();
-    uint8_t m2 = middle_sensor.get_temperature();
-    int8_t t3 = bottom_sensor.get_temperature();
-    uint8_t m3 = bottom_sensor.get_temperature();
-
-=======
->>>>>>> 1d4a5b6 (cleaned project)
     ble->begin("IoKey_1", data_to_send);
 
     int counter = 0;

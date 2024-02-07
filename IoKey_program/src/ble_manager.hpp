@@ -1,11 +1,11 @@
 #ifndef Ble_Manager_h
 #define Ble_Manager_h
 
+#include <Arduino.h>
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <Wire.h>
 #include <global_config.h>
-#include <Arduino.h>
 
 #define DEVICE_INFO_UUID (uint16_t)0x180A
 #define ENVIRONMENTAL_SENSING_UUID (uint16_t)0x181A
@@ -16,10 +16,9 @@
 #define HUMIDITY_UUID (uint16_t)0x2A6F
 #define BATTERY_ENERGY_UUID (uint16_t)0x2BF0
 
-
 class BLEManager : public BLEServerCallbacks
 {
-private:
+  private:
     bool _is_connected;
 
     BLEServer *_server;
@@ -30,16 +29,16 @@ private:
     BLEManager(void);
     ~BLEManager(void);
 
-public:
+  public:
     BLEManager(const BLEManager &) = delete;
     void operator=(const BLEManager &) = delete;
 
     static BLEManager *get_instance(void);
     bool is_connected(void);
-    void onConnect(BLEServer*);
-    void onDisconnect(BLEServer*);
+    void onConnect(BLEServer *);
+    void onDisconnect(BLEServer *);
 
-    void begin(const char *, const uint8_t*);
+    void begin(const char *, const uint8_t *);
 };
 
 //? BLEManager* BLEManager::_instance = nullptr;
