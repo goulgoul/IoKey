@@ -34,3 +34,8 @@ bool TemperatureMoistureSensor::set_address(uint8_t address)
 {
     return _sensor->setAddress(address, true);
 }
+
+void TemperatureMoistureSensor::sleep()
+{
+    _sensor->sleep();
+}

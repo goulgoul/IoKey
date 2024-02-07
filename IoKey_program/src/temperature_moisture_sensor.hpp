@@ -19,10 +19,3 @@ class TemperatureMoistureSensor
     bool set_address(uint8_t);
     void sleep();
 };
-
-void loop()
-{
-    while ()
-    {
-    }
-}

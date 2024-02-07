@@ -8,18 +8,15 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/include",
-                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/src",
-<<<<<<< HEAD
-=======
+                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/include",
+                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/src",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
->>>>>>> 1d4a5b6 (cleaned project)
-                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/I2CSoilMoistureSensor",
+                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/I2CSoilMoistureSensor",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
-                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/SX126x-Arduino/src",
+                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/SX126x-Arduino/src",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
-                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/RPI_PICO_TimerInterrupt/src",
+                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/RPI_PICO_TimerInterrupt/src",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/newlib/platform_include",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/freertos/include",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/freertos/include/esp_additions/freertos",
@@ -213,13 +210,8 @@
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/qio_qspi/include",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/variants/heltec_wifi_lora_32_V3",
-                "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/Unity/src",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
-<<<<<<< HEAD
-                "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
-=======
->>>>>>> 1d4a5b6 (cleaned project)
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/BluetoothSerial/src",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src",
                 "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/EEPROM/src",
@@ -252,18 +244,15 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/include",
-                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/src",
-<<<<<<< HEAD
-=======
+                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/include",
+                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/src",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
->>>>>>> 1d4a5b6 (cleaned project)
-                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/I2CSoilMoistureSensor",
+                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/I2CSoilMoistureSensor",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
-                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/SX126x-Arduino/src",
+                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/SX126x-Arduino/src",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
-                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/RPI_PICO_TimerInterrupt/src",
+                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/RPI_PICO_TimerInterrupt/src",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/newlib/platform_include",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/freertos/include",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/freertos/include/esp_additions/freertos",
@@ -457,13 +446,8 @@
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/qio_qspi/include",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/variants/heltec_wifi_lora_32_V3",
-                    "/home/mouss/Documents/Cours/5A_GPSE_MSc_IoT/Demonstrateur/Programme/IoKey/IoKey_program/.pio/libdeps/heltec_wifi_lora_32_V3/Unity/src",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
-<<<<<<< HEAD
-                    "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
-=======
->>>>>>> 1d4a5b6 (cleaned project)
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/BluetoothSerial/src",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src",
                     "/home/mouss/.platformio/packages/framework-arduinoespressif32/libraries/EEPROM/src",
