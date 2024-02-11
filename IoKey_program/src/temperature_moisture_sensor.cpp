@@ -7,7 +7,7 @@ TemperatureMoistureSensor::TemperatureMoistureSensor(uint8_t address) : _sensor(
 
 TemperatureMoistureSensor::~TemperatureMoistureSensor()
 {
-    delete[] _sensor;
+    delete _sensor;
 }
 
 void TemperatureMoistureSensor::begin()
@@ -18,7 +18,7 @@ void TemperatureMoistureSensor::begin()
 int8_t TemperatureMoistureSensor::get_temperature()
 {
     int temperature = _sensor->getTemperature();
-    return (int16_t)(temperature / 10.0);
+    return (int8_t)(temperature / 10.0);
 }
 
 unsigned int TemperatureMoistureSensor::get_moisture()

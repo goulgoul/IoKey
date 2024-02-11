@@ -109,6 +109,7 @@ void BLEManager::onConnect(BLEServer *server)
 void BLEManager::onDisconnect(BLEServer *server)
 {
     __ble_connected = false;
+    // _server->getAdvertising()->stop();
 }
 
 BLEManager::~BLEManager()
