@@ -1,0 +1,14 @@
+{
+  "datalogger": 1,
+  "battery_level": 74,
+  "temperature": {
+    "temperature_s1": 25.5,
+    "temperature_s2": 24.0,
+    "temperature_s3": 26.8
+  },
+  "humidity": {
+    "humidity_s1": 50.1,
+    "humidity_s2": 45.8,
+    "humidity_s3": 47.3
+  }
+}
